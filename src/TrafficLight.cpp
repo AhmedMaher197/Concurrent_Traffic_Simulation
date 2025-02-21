@@ -58,9 +58,9 @@ void TrafficLight::cycleThroughPhases()
         auto current_duration = std::chrono::duration_cast<std::chrono::seconds>(t2 - t1).count();
         if (current_duration >= cycle_duration)
         {
+            t1 = std::chrono::high_resolution_clock::now();
             _currentPhase = (_currentPhase == TrafficLightPhase::red) ? TrafficLightPhase::green : TrafficLightPhase::red;
             _messageQueue.send(std::move(getCurrentPhase()));
-            t1 = std::chrono::high_resolution_clock::now();
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
