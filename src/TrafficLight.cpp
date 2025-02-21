@@ -12,7 +12,7 @@ T MessageQueue<T>::receive()
     // to wait for and receive new messages and pull them from the queue using move semantics. 
     // The received object should then be returned by the receive function.
     std::unique_lock<std::mutex> lock(_mtx);
-    _condition.wait(_mtx, [this]() { return !_queue.empty(); });
+    _condition.wait(lock, [this]() { return !_queue.empty(); });
 
     T msg = std::move(_queue.back());
 
@@ -79,7 +79,6 @@ void TrafficLight::cycleThroughPhases()
         if (current_duration >= cycle_duration)
         {
             _currentPhase = (_currentPhase == TrafficLightPhase::red) ? TrafficLightPhase::green : TrafficLightPhase::red;
-            ///TODO: Add _messageQueue Send.
             _messageQueue.send(std::move(getCurrentPhase()));
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
